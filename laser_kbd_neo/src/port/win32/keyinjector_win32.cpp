@@ -43,6 +43,22 @@ public :
                 
                 if (intputlist[pos].type == KEY_EVENT_PRESSED) {
                     hasinputs = true;
+                    if (hasinputs && g_config_bundle.playsound) {
+                        // play sound feedback
+                        std::string soundfile = FILEPATH_RESOURCE_SOUND_FOLDER;
+
+                        /* plays bass drum for 'space' and 'a' keys
+                           snare for all else
+                        */
+                        if(inputs[pos].ki.wVk ==0x20 || inputs[pos].ki.wVk == 0x41 || inputs[pos].ki.wVk == 0x42){
+                            soundfile+= "bass.wav";
+                        }
+                        else{
+                            soundfile += "snare.wav";
+                        }
+                        ::sndPlaySoundA( soundfile.c_str(), SND_ASYNC);
+                        Sleep(100);
+                    }
                     inputs[pos].ki.dwFlags =  0;
                 } else {
                     inputs[pos].ki.dwFlags =  KEYEVENTF_KEYUP;
