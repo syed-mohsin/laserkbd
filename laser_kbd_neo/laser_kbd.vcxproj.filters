@@ -22,9 +22,6 @@
     <Filter Include="port">
       <UniqueIdentifier>{b8cd7e65-f5de-4e43-898c-c4df2c10aa00}</UniqueIdentifier>
     </Filter>
-    <Filter Include="port\inc">
-      <UniqueIdentifier>{010c5b35-fe2a-4e3a-aebe-745f3a337a82}</UniqueIdentifier>
-    </Filter>
     <Filter Include="port\common">
       <UniqueIdentifier>{3e5a654f-b4da-431b-a609-54313e0c11b0}</UniqueIdentifier>
     </Filter>
@@ -54,6 +51,9 @@
     </Filter>
     <Filter Include="ref\inc\json">
       <UniqueIdentifier>{47c1e0eb-6a56-41ab-b35f-6f00d5ac0a95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="port\common\inc">
+      <UniqueIdentifier>{010c5b35-fe2a-4e3a-aebe-745f3a337a82}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -171,7 +171,7 @@
       <Filter>sketch_pad</Filter>
     </ClInclude>
     <ClInclude Include="src\port\win32\inc\arch_inc.h">
-      <Filter>port\inc</Filter>
+      <Filter>port\common\inc</Filter>
     </ClInclude>
     <ClInclude Include="src\port\common\keyinjector.h">
       <Filter>port\common</Filter>
