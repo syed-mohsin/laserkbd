@@ -1,0 +1,5 @@
+exposure_level = -20
+keyrefire_delay = 1000
+keyrefire_interval = 100
+default_cam_id = 1
+playsound = 1
