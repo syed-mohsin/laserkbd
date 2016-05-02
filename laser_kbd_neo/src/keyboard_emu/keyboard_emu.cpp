@@ -97,9 +97,20 @@ bool KeyboardEmu::injectKeyArray(const std::vector<int> & key_list)
 
     // send  key press events
     for (int pos=0; pos<sizeof(pressed_bit)*8; ++pos)
-    {
+    {	
         if ( pressed_bit & ((unsigned long long )0x1 << pos) ) {
             inputArray.push_back(KeyEventDesc(KEY_EVENT_PRESSED, _provider.getKeyAt(pos)->lcase_val));
+			
+			// transmit key pressed to UDP controller server
+			char msg[2];
+			unsigned short key = _provider.getKeyAt(pos)->lcase_val;
+			msg[0] = key & 0xFF;
+			msg[1] = (key >> 8) & 0xFF;
+			if (sendto(_provider._socket, msg, sizeof(msg)-1, 0, (struct sockaddr *) &_provider._si_other, _provider._slen) == SOCKET_ERROR)
+			{
+				printf("sendto() failed with error code : %d", WSAGetLastError());
+				exit(EXIT_FAILURE);
+			}
         }
     }
 
@@ -107,7 +118,7 @@ bool KeyboardEmu::injectKeyArray(const std::vector<int> & key_list)
     if (inputArray.size())  {
         _is_refire_mode = false;
         _last_fire_time = getms() ;
-        OSKeyInjector::GetInstance()->injectKeyEvents(inputArray);
+        //OSKeyInjector::GetInstance()->injectKeyEvents(inputArray);
     }
 
     if (!_is_refire_mode && getms() - _last_fire_time < g_config_bundle.keyrefire_delay) {
@@ -129,9 +140,9 @@ bool KeyboardEmu::injectKeyArray(const std::vector<int> & key_list)
         }
     }
     
-    if (inputArray.size())  {
+    /*if (inputArray.size())  {
         OSKeyInjector::GetInstance()->injectKeyEvents(inputArray);
-    }
+    }*/
 
     return true;
 

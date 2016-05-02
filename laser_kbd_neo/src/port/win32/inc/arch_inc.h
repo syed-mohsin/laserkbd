@@ -11,6 +11,7 @@
 
 
 #include <direct.h>
+#include <winsock2.h>
 #include <windows.h>
 
 static inline int mkdir(const char * path, int mode){

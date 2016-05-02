@@ -18,94 +18,20 @@
 #include "layout_provider.h"
 #include <functional>
 #include "kdtree++/kdtree.hpp"
+#pragma comment(lib, "ws2_32.lib") // Winsock Library
+
+#define SERVER "127.0.0.1"
+#define PORT 8000
 
 static const float MAX_KEY_BUTTON_SIZE = 60.0f;
 
 const static KeyDesc_t _key_mapper[] =
 { 
-    //    X       Y      W      H      Val   Val(capped)  Disp
-    {     0 + 1,     0,   16,    20,   '1',    '!',       "1 !"} ,
-    {    17 + 1,     0,   18,    20,   '2',    '@',       "2 Q"} ,
-    {    35 + 1,     0,   18,    20,   '3',    '#',       "3 #"} ,
-    {    53 + 1,     0,   18,    20,   '4',    '$' ,      "4 $"} ,
-    {    71 + 1,     0,   18,    20,   '5',    '%' ,      "5 %"} ,
-    {    89 + 1,     0,   18,    20,   '6',    '^' ,      "6 ^"} ,
-    {   107 + 1,     0,   18,    20,   '7',    '&' ,      "7 &"} ,
-    {   125 + 1,     0,   18,    20,   '8',  VK_MULTIPLY ,"8 *"} ,
-    {   143 + 1,     0,   18,    20,   '9',    '(',       "9 ("} ,
-    {   161 + 1,     0,   18,    20,   '0',    ')' ,      "0 )"} ,
-    {   179 + 1,     0,   18,    20,VK_OEM_MINUS,'_' ,    "- _"} ,
-    {   196 + 1,     0,   16,    20,VK_OEM_PLUS,VK_ADD ,  "= +"} ,
-    {    -7,  19.5,   23,    19,VK_ESCAPE,VK_ESCAPE,  "ESC" } ,
-    {    14,  19.5,   19,    19,   'Q',    'Q' , "Q"} ,
-    {    33,  19.5,   19,    19,   'W',    'W', "W" } ,
-    {    52,  19.5,   19,    19,   'E',    'E', "E" } ,
-    {    71,  19.5,   19,    19,   'R',    'R' , "R"} ,
-    {    90,  19.5,   19,    19,   'T',    'T', "T" } ,
-    {   109,  19.5,   19,    19,   'Y',    'Y' , "Y"} ,
-    {   128,  19.5,   18,    19,   'U',    'U' , "U"} ,
-    {   147,  19.5,   19,    19,   'I',    'I' , "I"} ,
-    {   166,  19.5,   19,    19,   'O',    'O' , "O"} ,
-    {   185,  19.5,   19,    19,   'P',    'P' , "P"} ,
-    { 206.5,  19.5,   24,    19,   VK_BACK,VK_BACK, "Back" } ,
-    { -19.5,  38.5,   23,    19,   VK_CAPITAL, VK_CAPITAL, "CAP"} ,
-    {   1.5,  38.5,   19,    19,   VK_TAB,VK_TAB , "TAB"} ,
-    {  20.5,  38.5,   19,    19,   'A',    'A', "A"} ,
-    {  39.5,  38.5,   19,    19,   'S',    'S' , "S"} ,
-    {  58.5,  38.5,   19,    19,   'D',    'D' , "D"} ,
-    {  77.5,  38.5,   19,    19,   'F',    'F' , "F"} ,
-    {  96.5,  38.5,   19,    19,   'G',    'G' , "G"} ,
-    { 115.5,  38.5,   19,    19,   'H',    'H' , "H"} ,
-    { 134.5,  38.5,   19,    19,   'J',    'J', "J" } ,
-    { 153.5,  38.5,   19,    19,   'K',    'K' , "K"} ,
-    { 172.5,  38.5,   19,    19,   'L',    'L' , "L"} ,
-    { 191.5,  38.5,   19,    19,   VK_OEM_1,VK_OEM_1, "; :" } ,
-    {   218,  38.5,   34,    19,   VK_RETURN,VK_RETURN , "RET"} ,
-    {   -32,  57.5,   27,    19,   VK_LSHIFT, VK_LSHIFT, "SHIFT"} ,
-    {    -9,  57.5,   19,    19,   VK_OEM_3,VK_OEM_3 , "` ~"} ,
-    {    10,  57.5,   19,    19,   VK_OEM_5,VK_OEM_5, "\\ |" } ,
-    {    29,  57.5,   19,    19,   'Z',    'Z' , "Z"} ,
-    {    48,  57.5,   19,    19,   'X',    'X' , "X"} ,
-    {    67,  57.5,   19,    19,   'C',    'C' , "C"} ,
-    {    86,  57.5,   19,    19,   'V',    'V' , "V"} ,
-    {   105,  57.5,   19,    19,   'B',    'B' , "B"} ,
-    {   124,  57.5,   19,    19,   'N',    'N' , "N"} ,
-    {   143,  57.5,   19,    19,   'M',    'M' , "M"} ,
-    {   162,  57.5,   19,    19,   VK_OEM_COMMA,    '<' , ", <"} ,
-    {   181,  57.5,   19,    19,   VK_OEM_PERIOD,'>' , ". >"} ,
-#ifdef FEATURE_PATTERN_TYPE_2
-    {   200,  57.5,   19,    19,   VK_UP,VK_UP , "UP" } ,
-    {   219,  57.5,   19,    19,   VK_OEM_2,VK_OEM_2 , "/ ?"} ,
-#else
-    {   200,  57.5,   19,    19,   VK_OEM_2,VK_OEM_2 , "/ ?"} ,
-    {   219,  57.5,   19,    19,   VK_UP,VK_UP , "UP"} ,
-#endif
-
-    {   238,  57.5,   19,    19,   VK_RSHIFT,VK_RSHIFT , "SHIFT"} ,
-    {  -34.5,  76.5,   22,    19,   VK_CONTROL,VK_CONTROL , "CTRL"} ,
-#ifdef FEATURE_PATTERN_TYPE_2
-    { -13,  76.5,   21,    19,   VK_MENU,VK_MENU , "ALT"} ,
-    {   8,  76.5,   21,    19,   KEY_FN,KEY_FN , "FN"} ,
-
-#else
-    { -13,  76.5,   21,    19,   KEY_FN,KEY_FN , "FN"} ,
-    {   8,  76.5,   21,    19,   VK_MENU,VK_MENU , "ALT"} ,
-#endif
-    {  28,  76.5,   19,    19,   VK_OEM_4,VK_OEM_4 , "[ {"} ,
-    {  47,  76.5,   19,    19,   VK_OEM_6,VK_OEM_6 , "] }"} ,
-    {   104.5,  76.5,  96,    19,   VK_SPACE,VK_SPACE , "SPACE"} ,
-    { 162,  76.5,   19,    19,   VK_OEM_7,VK_OEM_7 , "' \""} ,
-#ifdef FEATURE_PATTERN_TYPE_2
-    { 181,  76.5,   19,    19,   VK_LEFT,VK_LEFT , "LEFT"} ,
-    { 200,  76.5,   19,    19,   VK_DOWN, VK_DOWN, "DOWN"} ,
-    { 219,  76.5,   19,    19,   VK_RIGHT,VK_RIGHT, "RIGHT"} ,
-    { 238,  76.5,   19,    19,   VK_DELETE, VK_DELETE, "DEL"} 
-#else
-    { 181,  76.5,   19,    19,   VK_DELETE, VK_DELETE, "DEL"} ,
-    { 200,  76.5,   19,    19,   VK_LEFT,VK_LEFT , "LEFT"} ,
-    { 219,  76.5,   19,    19,   VK_DOWN, VK_DOWN, "DOWN"} ,
-    { 238,  76.5,   19,    19,   VK_RIGHT,VK_RIGHT, "RIGHT" } 
-#endif
+    //    X       Y      W      H    Val     Val(capped)  Disp
+    {      0,	   0,    100,    100,   'E',    'E',  "E"} ,
+    {    101,      0,    100,    100,   'R',    'R',  "R"} ,
+    {      0,    101,    100,    100,   'T',    'T',  "T"} ,
+    {    101,    101,    100,    100,   'Y',    'Y',  "Y"} 
 };
 
 
@@ -151,6 +77,31 @@ typedef KDTree::KDTree<2, KDBlob, std::pointer_to_binary_function<const KDBlob &
 
 KeyLayoutProvider::KeyLayoutProvider()
 {
+	/* INITIALIZE CLIENT UDP SOCKET FOR TRANSMITTING KEY STROKES */
+	_slen = sizeof(_si_other);
+
+	//Initialise winsock
+	printf("\nInitialising Winsock...");
+	if (WSAStartup(MAKEWORD(2, 2), &_wsa) != 0)
+	{
+		printf("Failed. Error Code : %d", WSAGetLastError());
+		exit(EXIT_FAILURE);
+	}
+	printf("Initialised.\n");
+
+	//create socket
+	if ((_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == SOCKET_ERROR)
+	{
+		printf("socket() failed with error code : %d", WSAGetLastError());
+		exit(EXIT_FAILURE);
+	}
+
+	//setup address structure
+	memset((char *)&_si_other, 0, sizeof(_si_other));
+	_si_other.sin_family = AF_INET;
+	_si_other.sin_port = htons(PORT);
+	_si_other.sin_addr.S_un.S_addr = inet_addr(SERVER);
+
     _id_tl = _id_tr = _id_bl = _id_br = 0;
     
     _kd_tree = new kdtree_2d_t(std::ptr_fun(kdblob_accessor));

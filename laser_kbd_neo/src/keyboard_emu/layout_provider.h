@@ -48,6 +48,11 @@ public:
 
     CvPoint2D32f keyboardPosToWindowPos(const CvPoint2D32f & );
 
+	int	               _socket;
+	int                _slen;
+	struct sockaddr_in _si_other;
+	WSADATA			   _wsa;
+
 protected:
     void * _kd_tree;
 
